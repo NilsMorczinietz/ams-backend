@@ -6,8 +6,15 @@ import {
   Param,
   Patch,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import { CreateRankDto, GetRankDto, UpdateRankDto } from './dto';
+import {
+  CreateRankDto,
+  GetRankDto,
+  ReorderRanksDto,
+  UpdateRankDto,
+} from './dto';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RankService } from './rank.service';
 
@@ -36,6 +43,14 @@ export class RankController {
   async getAllRanks(): Promise<GetRankDto[]> {
     const ranks = await this.rankService.getAll();
     return ranks.map((rank) => new GetRankDto(rank));
+  }
+
+  @Patch('reorder')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBody({ type: ReorderRanksDto })
+  @ApiResponse({ status: 204, description: 'Ranks reordered successfully' })
+  async reorderRanks(@Body() dto: ReorderRanksDto): Promise<void> {
+    return await this.rankService.reorderRanks(dto);
   }
 
   @Patch(':id')

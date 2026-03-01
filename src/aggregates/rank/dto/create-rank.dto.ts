@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { RankCreateInput } from 'generated/prisma/models';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateRankDto implements RankCreateInput {
+export class CreateRankDto {
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }: { value: string }) => value?.trim())
@@ -15,9 +14,4 @@ export class CreateRankDto implements RankCreateInput {
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({ example: 'BOI' })
   abbreviation: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty({ example: 10 })
-  level: number;
 }
