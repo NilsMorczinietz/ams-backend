@@ -81,14 +81,6 @@ CREATE TABLE "promotions" (
 );
 
 -- CreateTable
-CREATE TABLE "courses_for_ranks" (
-    "courseId" UUID NOT NULL,
-    "rankId" UUID NOT NULL,
-
-    CONSTRAINT "courses_for_ranks_pkey" PRIMARY KEY ("courseId","rankId")
-);
-
--- CreateTable
 CREATE TABLE "promotion_requirements" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "rankId" UUID NOT NULL,
@@ -136,12 +128,6 @@ ALTER TABLE "promotions" ADD CONSTRAINT "promotions_userId_fkey" FOREIGN KEY ("u
 
 -- AddForeignKey
 ALTER TABLE "promotions" ADD CONSTRAINT "promotions_rankId_fkey" FOREIGN KEY ("rankId") REFERENCES "ranks"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "courses_for_ranks" ADD CONSTRAINT "courses_for_ranks_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "courses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "courses_for_ranks" ADD CONSTRAINT "courses_for_ranks_rankId_fkey" FOREIGN KEY ("rankId") REFERENCES "ranks"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "promotion_requirements" ADD CONSTRAINT "promotion_requirements_rankId_fkey" FOREIGN KEY ("rankId") REFERENCES "ranks"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
