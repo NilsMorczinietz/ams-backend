@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateRankDto {
   @IsNotEmpty()
@@ -14,4 +14,9 @@ export class CreateRankDto {
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({ example: 'BOI' })
   abbreviation: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty({ example: false })
+  isDefault: boolean;
 }

@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UpdateRankDto {
   @IsOptional()
@@ -16,7 +16,7 @@ export class UpdateRankDto {
   abbreviation?: string;
 
   @IsOptional()
-  @IsNumber()
-  @ApiPropertyOptional({ example: 10 })
-  level?: number;
+  @IsBoolean()
+  @ApiPropertyOptional({ example: false })
+  isDefault?: boolean;
 }

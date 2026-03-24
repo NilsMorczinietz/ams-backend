@@ -23,8 +23,10 @@ model User {
   addressId String?  @db.Uuid
   address   Address? @relation(fields: [addressId], references: [id])
 
-  participations Participation[]
-  promotions     Promotion[]
+  participations      Participation[]
+  promotions          Promotion[]
+  surveySubmissions   SurveySubmission[]
+  surveyCourseEntries SurveyCourseEntry[]
 
   @@map("users")
 }
@@ -36,7 +38,8 @@ model Location {
   addressId String?  @db.Uuid
   address   Address? @relation(fields: [addressId], references: [id])
 
-  participations Participation[]
+  participations      Participation[]
+  surveyCourseEntries SurveyCourseEntry[]
 
   @@map("locations")
 }
@@ -62,6 +65,7 @@ model Course {
 
   participations        Participation[]
   promotionRequirements PromotionRequirement[]
+  surveyCourseEntries   SurveyCourseEntry[]
 
   @@map("courses")
 }
@@ -83,10 +87,10 @@ model Participation {
 }
 
 model Rank {
-  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String
   abbreviation String
-  level        Int    @unique
+  isDefault    Boolean @default(false)
 
   users        User[]
   promotions   Promotion[]
@@ -125,15 +129,74 @@ model PromotionRequirement {
   requiredCourseId String? @db.Uuid
   requiredCourse   Course? @relation(fields: [requiredCourseId], references: [id])
 
-  // Gleicher groupKey = ODER-Gruppe, Gruppen selbst mit AND verknüpft
+  // Gleicher groupKey = AND-Gruppe, Gruppen selbst mit ODER verknüpft
   groupKey String?
 
   @@map("promotion_requirements")
+}
+
+model Survey {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String?
+  type        SurveyType
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime   @default(now())
+
+  submissions SurveySubmission[]
+
+  @@map("surveys")
+}
+
+model SurveySubmission {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now())
+
+  userId   String @db.Uuid
+  user     User   @relation(fields: [userId], references: [id])
+  surveyId String @db.Uuid
+  survey   Survey @relation(fields: [surveyId], references: [id])
+
+  entries SurveyCourseEntry[]
+
+  @@unique([userId, surveyId])
+  @@map("survey_submissions")
+}
+
+model SurveyCourseEntry {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  status    SurveyEntryStatus @default(PENDING)
+  startDate DateTime?
+  endDate   DateTime?
+
+  locationId   String?          @db.Uuid
+  location     Location?        @relation(fields: [locationId], references: [id])
+  submissionId String           @db.Uuid
+  submission   SurveySubmission @relation(fields: [submissionId], references: [id])
+  courseId     String           @db.Uuid
+  course       Course           @relation(fields: [courseId], references: [id])
+  user         User?            @relation(fields: [userId], references: [id])
+  userId       String?          @db.Uuid
+
+  @@map("survey_course_entries")
+}
+
+enum SurveyType {
+  COURSE_INVENTORY
+}
+
+enum SurveyEntryStatus {
+  IN_PROGRESS
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum RequirementType {
   MIN_YEARS_IN_RANK
   MIN_YEARS_TOTAL_SERVICE
   REQUIRED_COURSE
-  REQUIRED_PREVIOUS_RANK
+  REQUIRED_RANK
 }

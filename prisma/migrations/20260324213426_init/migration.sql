@@ -1,5 +1,11 @@
 -- CreateEnum
-CREATE TYPE "RequirementType" AS ENUM ('MIN_YEARS_IN_RANK', 'MIN_YEARS_TOTAL_SERVICE', 'REQUIRED_COURSE', 'REQUIRED_PREVIOUS_RANK');
+CREATE TYPE "SurveyType" AS ENUM ('COURSE_INVENTORY');
+
+-- CreateEnum
+CREATE TYPE "SurveyEntryStatus" AS ENUM ('IN_PROGRESS', 'PENDING', 'APPROVED', 'REJECTED');
+
+-- CreateEnum
+CREATE TYPE "RequirementType" AS ENUM ('MIN_YEARS_IN_RANK', 'MIN_YEARS_TOTAL_SERVICE', 'REQUIRED_COURSE', 'REQUIRED_RANK');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -65,7 +71,7 @@ CREATE TABLE "ranks" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "name" TEXT NOT NULL,
     "abbreviation" TEXT NOT NULL,
-    "level" INTEGER NOT NULL,
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "ranks_pkey" PRIMARY KEY ("id")
 );
@@ -93,6 +99,43 @@ CREATE TABLE "promotion_requirements" (
     CONSTRAINT "promotion_requirements_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "surveys" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "type" "SurveyType" NOT NULL,
+    "startDate" TIMESTAMP(3) NOT NULL,
+    "endDate" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "surveys_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "survey_submissions" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" UUID NOT NULL,
+    "surveyId" UUID NOT NULL,
+
+    CONSTRAINT "survey_submissions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "survey_course_entries" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "status" "SurveyEntryStatus" NOT NULL DEFAULT 'PENDING',
+    "startDate" TIMESTAMP(3),
+    "endDate" TIMESTAMP(3),
+    "locationId" UUID,
+    "submissionId" UUID NOT NULL,
+    "courseId" UUID NOT NULL,
+    "userId" UUID,
+
+    CONSTRAINT "survey_course_entries_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_oid_key" ON "users"("oid");
 
@@ -103,7 +146,7 @@ CREATE UNIQUE INDEX "users_mpid_key" ON "users"("mpid");
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ranks_level_key" ON "ranks"("level");
+CREATE UNIQUE INDEX "survey_submissions_userId_surveyId_key" ON "survey_submissions"("userId", "surveyId");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_rankId_fkey" FOREIGN KEY ("rankId") REFERENCES "ranks"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -137,3 +180,21 @@ ALTER TABLE "promotion_requirements" ADD CONSTRAINT "promotion_requirements_requ
 
 -- AddForeignKey
 ALTER TABLE "promotion_requirements" ADD CONSTRAINT "promotion_requirements_requiredCourseId_fkey" FOREIGN KEY ("requiredCourseId") REFERENCES "courses"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "survey_submissions" ADD CONSTRAINT "survey_submissions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "survey_submissions" ADD CONSTRAINT "survey_submissions_surveyId_fkey" FOREIGN KEY ("surveyId") REFERENCES "surveys"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "survey_course_entries" ADD CONSTRAINT "survey_course_entries_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "locations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "survey_course_entries" ADD CONSTRAINT "survey_course_entries_submissionId_fkey" FOREIGN KEY ("submissionId") REFERENCES "survey_submissions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "survey_course_entries" ADD CONSTRAINT "survey_course_entries_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "courses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "survey_course_entries" ADD CONSTRAINT "survey_course_entries_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
