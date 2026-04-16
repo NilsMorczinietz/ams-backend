@@ -102,12 +102,13 @@ CREATE TABLE "promotion_requirements" (
 -- CreateTable
 CREATE TABLE "surveys" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "title" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "description" TEXT,
     "type" "SurveyType" NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" UUID,
 
     CONSTRAINT "surveys_pkey" PRIMARY KEY ("id")
 );
@@ -180,6 +181,9 @@ ALTER TABLE "promotion_requirements" ADD CONSTRAINT "promotion_requirements_requ
 
 -- AddForeignKey
 ALTER TABLE "promotion_requirements" ADD CONSTRAINT "promotion_requirements_requiredCourseId_fkey" FOREIGN KEY ("requiredCourseId") REFERENCES "courses"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "surveys" ADD CONSTRAINT "surveys_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "survey_submissions" ADD CONSTRAINT "survey_submissions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

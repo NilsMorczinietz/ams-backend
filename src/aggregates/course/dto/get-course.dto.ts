@@ -9,7 +9,7 @@ export class GetCourseDto {
   name: string;
 
   @ApiProperty({ example: 'TM-M1' })
-  abbreviation?: string;
+  abbreviation: string;
 
   constructor(course: Course) {
     this.id = course.id;
