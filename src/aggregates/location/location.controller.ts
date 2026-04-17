@@ -6,7 +6,9 @@ import {
   Param,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { KeycloakAuthGuard } from 'src/auth/auth.guard';
 import { LocationService } from './location.service';
 import { CreateLocationDto, GetLocationDto, UpdateLocationDto } from './dto';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -17,6 +19,7 @@ export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
   @Post()
+  @UseGuards(KeycloakAuthGuard)
   @ApiBody({ type: CreateLocationDto })
   @ApiResponse({ status: 201, type: GetLocationDto })
   async createLocation(

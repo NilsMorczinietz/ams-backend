@@ -6,7 +6,7 @@ import {
   HttpHealthIndicator,
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
-import { AzureAdAuthGuard } from 'src/auth/auth.guard';
+import { KeycloakAuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('health')
 @Controller('health')
@@ -32,7 +32,7 @@ export class HealthController {
   }
 
   @Get('details')
-  @UseGuards(AzureAdAuthGuard)
+  @UseGuards(KeycloakAuthGuard)
   @HealthCheck()
   details() {
     return this.health.check([

@@ -1,31 +1,31 @@
 /**
- * User data from Azure AD token claims
+ * Authenticated user data resolved from application database
  */
-export interface AzureAdUser {
+export interface AuthUser {
+  id: string;
   oid: string;
   name: string;
   email: string;
 }
 
 /**
- * Azure AD ID Token Claims
+ * Access token claims used by this application
  */
-export interface AzureAdTokenClaims {
-  oid: string; // Object ID - unique user identifier
+export interface TokenClaims {
+  sub: string;
   name?: string;
   email?: string;
   preferred_username?: string;
-  aud: string; // Audience
-  iss: string; // Issuer
-  iat: number; // Issued at
-  exp: number; // Expiration time
-  sub: string; // Subject
+  aud: string | string[];
+  iss: string;
+  iat: number;
+  exp: number;
 }
 
 /**
- * JWT Payload with Azure AD claims
+ * JWT payload with application-relevant claims
  */
-export interface JwtPayload extends AzureAdTokenClaims {
+export interface JwtPayload extends TokenClaims {
   [key: string]: unknown;
 }
 
@@ -33,6 +33,6 @@ export interface JwtPayload extends AzureAdTokenClaims {
  * Request with authenticated user
  */
 export interface AuthenticatedRequest extends Request {
-  user?: AzureAdUser;
+  user?: AuthUser;
   token?: JwtPayload;
 }

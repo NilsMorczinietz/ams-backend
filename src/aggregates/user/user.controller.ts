@@ -8,9 +8,9 @@ import {
   Delete,
   Patch,
 } from '@nestjs/common';
-import { AzureAdAuthGuard } from 'src/auth/auth.guard';
+import { KeycloakAuthGuard } from 'src/auth/auth.guard';
 import { CurrentUser, CurrentToken } from 'src/decorators';
-import type { AzureAdUser, JwtPayload } from 'src/types';
+import type { AuthUser, JwtPayload } from 'src/types';
 import { UserService } from './user.service';
 import { CreateUserDto, GetUserDto, UpdateUserDto } from './dto';
 import { User } from 'generated/prisma/client';
@@ -58,8 +58,8 @@ export class UserController {
    * Requires authentication
    */
   @Get('profile')
-  @UseGuards(AzureAdAuthGuard)
-  getProfile(@CurrentUser() user: AzureAdUser) {
+  @UseGuards(KeycloakAuthGuard)
+  getProfile(@CurrentUser() user: AuthUser) {
     return {
       success: true,
       data: user,
@@ -71,9 +71,9 @@ export class UserController {
    * Requires authentication
    */
   @Get('me')
-  @UseGuards(AzureAdAuthGuard)
+  @UseGuards(KeycloakAuthGuard)
   getCurrentUser(
-    @CurrentUser() user: AzureAdUser,
+    @CurrentUser() user: AuthUser,
     @CurrentToken() token: JwtPayload,
   ) {
     return {

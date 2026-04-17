@@ -6,18 +6,17 @@ import {
 } from '@nestjs/common';
 import jwksClient, { JwksClient } from 'jwks-rsa';
 import { decode, verify } from 'jsonwebtoken';
-import { Request } from 'express';
-import { azureAdConfig } from './auth.config';
+import { keycloakConfig } from './auth.config';
 import type {
   JwtPayload,
   AuthenticatedRequest,
-  AzureAdUser,
+  AuthUser,
 } from '../types/auth.types';
 
 @Injectable()
-export class AzureAdAuthGuard implements CanActivate {
+export class KeycloakAuthGuard implements CanActivate {
   private readonly client: JwksClient = jwksClient({
-    jwksUri: azureAdConfig.jwksUri,
+    jwksUri: keycloakConfig.jwksUri,
   });
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -38,23 +37,28 @@ export class AzureAdAuthGuard implements CanActivate {
       const publicKey = await this.getPublicKey(token);
 
       const payload = verify(token, publicKey, {
-        issuer: azureAdConfig.issuer,
-        audience: azureAdConfig.audience,
+        issuer: keycloakConfig.issuer,
+        audience: keycloakConfig.audience,
+        algorithms: ['RS256'],
       }) as JwtPayload;
 
       if (typeof payload !== 'object' || payload === null) {
         throw new UnauthorizedException('Invalid token payload');
       }
 
-      // Extract user information from token
-      const user: AzureAdUser = {
-        oid: payload.oid,
-        name: payload.name || 'Unknown User',
-        email: payload.email || payload.preferred_username || '',
+      if (!payload.sub) {
+        throw new UnauthorizedException('Token subject is missing');
+      }
+
+      const authenticatedUser: AuthUser = {
+        id: payload.sub,
+        oid: payload.sub,
+        name: payload.name ?? 'Unknown User',
+        email: payload.email ?? payload.preferred_username ?? '',
       };
 
       // Attach user and token to request
-      request.user = user;
+      request.user = authenticatedUser;
       request.token = payload;
 
       return true;
