@@ -8,6 +8,7 @@ import {
 import jwksClient, { JwksClient } from 'jwks-rsa';
 import { decode, verify } from 'jsonwebtoken';
 import { keycloakConfig } from './auth.config';
+import { UserService } from 'src/aggregates/user/user.service';
 import type {
   JwtPayload,
   AuthenticatedRequest,
@@ -17,6 +18,8 @@ import type {
 @Injectable()
 export class KeycloakAuthGuard implements CanActivate {
   private readonly logger = new Logger(KeycloakAuthGuard.name);
+
+  constructor(private readonly userService: UserService) {}
 
   private readonly client: JwksClient = jwksClient({
     jwksUri: keycloakConfig.jwksUri,
@@ -53,11 +56,13 @@ export class KeycloakAuthGuard implements CanActivate {
         throw new UnauthorizedException('Token subject is missing');
       }
 
+      const dbUser = await this.userService.upsertFromKeycloakClaims(payload);
+
       const authenticatedUser: AuthUser = {
-        id: payload.sub,
-        oid: payload.sub,
-        name: payload.name ?? 'Unknown User',
-        email: payload.email ?? payload.preferred_username ?? '',
+        id: dbUser.id,
+        oid: dbUser.oid,
+        name: dbUser.name,
+        email: dbUser.email,
       };
 
       // Attach user and token to request
