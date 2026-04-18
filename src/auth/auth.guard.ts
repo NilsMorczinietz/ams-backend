@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import jwksClient, { JwksClient } from 'jwks-rsa';
@@ -15,6 +16,8 @@ import type {
 
 @Injectable()
 export class KeycloakAuthGuard implements CanActivate {
+  private readonly logger = new Logger(KeycloakAuthGuard.name);
+
   private readonly client: JwksClient = jwksClient({
     jwksUri: keycloakConfig.jwksUri,
   });
@@ -63,9 +66,10 @@ export class KeycloakAuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      throw new UnauthorizedException(
-        error instanceof Error ? error.message : 'Invalid token',
+      this.logger.warn(
+        `Token verification failed: ${error instanceof Error ? error.message : 'unknown error'}`,
       );
+      throw new UnauthorizedException('Invalid authentication token');
     }
   }
 
