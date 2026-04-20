@@ -19,9 +19,10 @@ export class SurveyService {
 
   async createSurvey(
     dto: CreateSurveyDto,
+    userId: string,
   ): Promise<Prisma.SurveyGetPayload<object>> {
     return this.prisma.survey.create({
-      data: { ...dto },
+      data: { ...dto, userId },
     });
   }
 

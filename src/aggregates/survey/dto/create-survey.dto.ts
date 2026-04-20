@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
   IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -13,27 +14,28 @@ export class CreateSurveyDto {
   @IsString()
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({ example: 'Bestandsabfrage' })
-  name: string;
+  name!: string;
 
   @IsOptional()
   @IsString()
   @Transform(({ value }: { value: string }) => value?.trim())
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Hiermit werden alle bereits durchgeführten Lehrgänge abgefragt.',
   })
-  description: string;
+  description?: string;
 
-  @IsOptional()
-  @ApiProperty({ example: SurveyType.COURSE_INVENTORY })
-  type: SurveyType;
+  @IsNotEmpty()
+  @IsEnum(SurveyType)
+  @ApiProperty({ example: SurveyType.COURSE_INVENTORY, enum: SurveyType })
+  type!: SurveyType;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsDateString()
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({
     example: '2024-01-01T00:00:00.000Z',
   })
-  startDate: Date;
+  startDate!: Date;
 
   @IsNotEmpty()
   @IsDateString()
@@ -41,5 +43,5 @@ export class CreateSurveyDto {
   @ApiProperty({
     example: '2024-12-31T23:59:59.000Z',
   })
-  endDate: Date;
+  endDate!: Date;
 }
