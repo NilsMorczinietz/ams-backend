@@ -28,7 +28,6 @@ export class SurveyController {
   }
 
   @Get(':id')
-  @UseGuards(KeycloakAuthGuard)
   @ApiResponse({ status: 200, type: GetSurveyDto })
   async getSurveyById(@Param('id') id: string): Promise<GetSurveyDto> {
     const survey = await this.surveyService.getSurveyById(id);
@@ -36,7 +35,6 @@ export class SurveyController {
   }
 
   @Get()
-  @UseGuards(KeycloakAuthGuard)
   @ApiResponse({ status: 200, type: [GetSurveyDto] })
   async getAllSurveys(): Promise<GetSurveyDto[]> {
     const surveys = await this.surveyService.getAll();
