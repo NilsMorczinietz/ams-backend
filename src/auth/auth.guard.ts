@@ -60,7 +60,7 @@ export class KeycloakAuthGuard implements CanActivate {
 
       const authenticatedUser: AuthUser = {
         id: dbUser.id,
-        oid: dbUser.oid,
+        keycloakId: dbUser.keycloakId,
         name: dbUser.name,
         email: dbUser.email,
       };

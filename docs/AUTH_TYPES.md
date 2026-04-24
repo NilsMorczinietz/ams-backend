@@ -10,7 +10,8 @@ Diese Dokumentation beschreibt die typsichere Implementierung der Azure AD Authe
 
 ```typescript
 interface User {
-  id: string; // Azure AD Object ID (oid)
+  id: string; // Interne User-ID
+  keycloakId: string; // Keycloak Subject-ID
   name: string; // Display name
   email: string; // Email or UPN
 }
@@ -22,7 +23,7 @@ Standard Azure AD ID Token Claims gemäß [Microsoft Dokumentation](https://lear
 
 **Wichtige Claims:**
 
-- `oid`: Object ID - eindeutiger User-Identifier
+- `sub` / `keycloakId`: eindeutiger User-Identifier aus Keycloak
 - `name`: Anzeigename des Users
 - `email`: Email-Adresse (optional)
 - `preferred_username`: UPN oder Email für Login

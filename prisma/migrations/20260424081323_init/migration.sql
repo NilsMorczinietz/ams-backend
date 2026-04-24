@@ -10,7 +10,7 @@ CREATE TYPE "RequirementType" AS ENUM ('MIN_YEARS_IN_RANK', 'MIN_YEARS_TOTAL_SER
 -- CreateTable
 CREATE TABLE "users" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
-    "oid" TEXT NOT NULL,
+    "keycloakId" TEXT NOT NULL,
     "mpid" TEXT,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -138,7 +138,7 @@ CREATE TABLE "survey_course_entries" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_oid_key" ON "users"("oid");
+CREATE UNIQUE INDEX "users_keycloakId_key" ON "users"("keycloakId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_mpid_key" ON "users"("mpid");

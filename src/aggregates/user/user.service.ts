@@ -9,14 +9,14 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async upsertFromKeycloakClaims(claims: JwtPayload): Promise<User> {
-    const oid = claims.sub;
+    const keycloakId = claims.sub;
     const name = this.resolveName(claims);
     const email = this.resolveEmail(claims);
 
     return this.prisma.user.upsert({
-      where: { oid },
+      where: { keycloakId },
       create: {
-        oid,
+        keycloakId,
         name,
         email,
       },
@@ -27,9 +27,9 @@ export class UserService {
     });
   }
 
-  async getUserByOid(oid: string): Promise<User> {
+  async getUserByKeycloakId(keycloakId: string): Promise<User> {
     return this.prisma.user.findUniqueOrThrow({
-      where: { oid },
+      where: { keycloakId },
     });
   }
 

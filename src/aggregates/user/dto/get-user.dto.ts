@@ -9,7 +9,7 @@ export class GetUserDto {
   mpid?: string;
 
   @ApiProperty({ example: '3f1c2d4e-8a7b-4d9f-91c2-6e5b8f1a2d3c' })
-  oid: string;
+  keycloakId: string;
 
   @ApiProperty({ example: 'Max Mustermann' })
   name: string;
@@ -35,7 +35,7 @@ export class GetUserDto {
   constructor(user: User) {
     this.id = user.id;
     this.mpid = user.mpid ?? undefined;
-    this.oid = user.oid;
+    this.keycloakId = user.keycloakId;
     this.name = user.name;
     this.email = user.email;
     this.createdAt = user.createdAt;

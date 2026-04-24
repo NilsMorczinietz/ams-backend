@@ -9,14 +9,14 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  oid       String    @unique
-  mpid      String?   @unique
-  name      String
-  email     String    @unique
-  joinedAt  DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  keycloakId String    @unique
+  mpid       String?   @unique
+  name       String
+  email      String    @unique
+  joinedAt   DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
 
   rankId    String?  @db.Uuid
   rank      Rank?    @relation(fields: [rankId], references: [id])

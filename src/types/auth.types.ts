@@ -3,7 +3,7 @@
  */
 export interface AuthUser {
   id: string;
-  oid: string;
+  keycloakId: string;
   name: string;
   email: string;
 }
