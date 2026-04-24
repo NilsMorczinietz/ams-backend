@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { SurveyService } from './survey.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateSurveyDto, GetSurveyDto } from './dto';
+import { UpdateSurveyDto } from './dto/update-survey.dto';
 import { Survey } from 'generated/prisma/client';
 import { KeycloakAuthGuard } from 'src/auth/auth.guard';
 import { CurrentUser } from 'src/decorators';
@@ -39,5 +49,22 @@ export class SurveyController {
   async getAllSurveys(): Promise<GetSurveyDto[]> {
     const surveys = await this.surveyService.getAll();
     return surveys.map((survey) => new GetSurveyDto(survey));
+  }
+
+  @Patch(':id')
+  @ApiBody({ type: UpdateSurveyDto })
+  @ApiResponse({ status: 200, type: GetSurveyDto })
+  async updateSurvey(
+    @Param('id') id: string,
+    @Body() dto: UpdateSurveyDto,
+  ): Promise<GetSurveyDto> {
+    const updatedSurvey = await this.surveyService.updateSurvey(id, dto);
+    return new GetSurveyDto(updatedSurvey);
+  }
+
+  @Delete(':id')
+  @ApiResponse({ status: 200 })
+  async deleteSurveyById(@Param('id') id: string): Promise<void> {
+    return await this.surveyService.deleteSurveyById(id);
   }
 }

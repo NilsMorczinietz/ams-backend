@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from 'generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSurveyDto } from './dto';
+import { UpdateSurveyDto } from './dto/update-survey.dto';
 
 @Injectable()
 export class SurveyService {
@@ -23,6 +24,16 @@ export class SurveyService {
   ): Promise<Prisma.SurveyGetPayload<object>> {
     return this.prisma.survey.create({
       data: { ...dto, userId },
+    });
+  }
+
+  async updateSurvey(
+    id: string,
+    dto: UpdateSurveyDto,
+  ): Promise<Prisma.SurveyGetPayload<object>> {
+    return this.prisma.survey.update({
+      where: { id },
+      data: { ...dto },
     });
   }
 
