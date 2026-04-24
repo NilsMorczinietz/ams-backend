@@ -7,11 +7,11 @@ export class CreateCourseDto {
   @IsString()
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({ example: 'Truppmann Modul 1' })
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({ example: 'TM-M1' })
-  abbreviation: string;
+  abbreviation!: string;
 }

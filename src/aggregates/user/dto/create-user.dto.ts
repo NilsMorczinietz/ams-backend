@@ -5,7 +5,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ example: '3f1c2d4e-8a7b-4d9f-91c2-6e5b8f1a2d3c' })
-  keycloakId: string;
+  keycloakId!: string;
 
   @IsOptional()
   @IsString()
@@ -15,10 +15,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({ example: 'Max Mustermann' })
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({ example: 'max.mustermann@example.com' })
-  email: string;
+  email!: string;
 }

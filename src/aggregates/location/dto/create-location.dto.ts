@@ -8,10 +8,10 @@ export class CreateLocationDto {
   @IsString()
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({ example: 'Musterfeuerwache' })
-  name: string;
+  name!: string;
 
   @ValidateNested()
   @Type(() => CreateAddressDto)
   @ApiProperty({ type: CreateAddressDto })
-  address: CreateAddressDto;
+  address!: CreateAddressDto;
 }

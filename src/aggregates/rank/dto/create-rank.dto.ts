@@ -7,16 +7,16 @@ export class CreateRankDto {
   @IsString()
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({ example: 'Brandoberinspektor' })
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }: { value: string }) => value?.trim())
   @ApiProperty({ example: 'BOI' })
-  abbreviation: string;
+  abbreviation!: string;
 
   @IsNotEmpty()
   @IsBoolean()
   @ApiProperty({ example: false })
-  isDefault: boolean;
+  isDefault!: boolean;
 }
